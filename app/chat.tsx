@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Animated, FlatList, Image, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, Modal } from 'react-native';
 import getMessageAge from "../server/utils/getMessageAge";
 import { socket } from "./socket";
-
+import { BlurView } from 'expo-blur';
 //Create socket once outside component
 
 
@@ -401,7 +401,7 @@ export default function ChatScreen() {
         >
 
             {pinnedNotes.length > 0 && (
-                <View style={styles.pinnedContainer}>
+                <BlurView intensity={40} tint="dark" style={styles.pinnedContainer}>
                     <Text style={styles.pinnedTitle}>📌 Pinned in this area</Text>
 
                     <ScrollView
@@ -419,16 +419,16 @@ export default function ChatScreen() {
                             </View>
                         ))}
                     </ScrollView>
-                </View>
+                </BlurView>
             )}
 
             {/* Messages */}
-            <Text style={{ textAlign: "center", color: "#999" }}>
+            <Text style={{ textAlign: "center", color: "#8888FF" }}>
                 👻 Area chat · Nearby ghosts only
             </Text>
             <Text style={{
                 textAlign: "center",
-                color: "#555",
+                color: "#A0A0B8",
                 paddingVertical: 6,
                 fontSize: 13
             }}>
@@ -523,13 +523,13 @@ export default function ChatScreen() {
 
 
                 <Pressable onPress={pickImage} style={styles.imageButton}>
-                    <Text style={{ fontSize: 20 }}>📷</Text>
+                    <Text style={{ fontSize: 20, color: "#A78BFA" }}>📷</Text>
                 </Pressable>
 
                 <TextInput
                     value={input}
                     onChangeText={handleTyping}
-
+                    placeholderTextColor="#8A8AA3"
                     placeholder="Type a message..."
                     style={styles.input}
                 />
@@ -568,7 +568,7 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: "#0F0F1A",
     },
     messagesContainer: {
         padding: 10,
@@ -576,42 +576,52 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     messageBubble: {
-        maxWidth: '75%',
-        padding: 10,
-        borderRadius: 12,
-        marginVertical: 4,
+        maxWidth: "78%",
+        padding: 12,
+        borderRadius: 18,
+        marginVertical: 6,
     },
+
     myMessage: {
-        alignSelf: 'flex-end',
-        backgroundColor: '#DCF8C6',
+        alignSelf: "flex-end",
+        backgroundColor: "#6C5CE7",
     },
+
     otherMessage: {
-        alignSelf: 'flex-start',
-        backgroundColor: '#E5E5EA',
+        alignSelf: "flex-start",
+        backgroundColor: "#23233A",
     },
     messageText: {
         fontSize: 16,
+        color: "#FFFFFF",
     },
     inputContainer: {
-        flexDirection: 'row',
-        padding: 8,
+        flexDirection: "row",
+        padding: 12,
         borderTopWidth: 1,
-        borderColor: '#ddd',
-        // alignItems: "center",
+        borderTopColor: "#2C2C45",
+        borderColor: "#2C2C3E",
+        backgroundColor: "#141425",
     },
     input: {
         flex: 1,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        marginRight: 8,
+        backgroundColor: "#1E1E35",
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        color: "#FFFFFF",
+        fontSize: 15,
     },
     sendButton: {
-        backgroundColor: '#25D366',
-        paddingHorizontal: 16,
-        justifyContent: 'center',
-        borderRadius: 8,
+        backgroundColor: "#8B5CF6",
+        paddingHorizontal: 22, paddingVertical: 12,
+        justifyContent: "center",
+        borderRadius: 25,
+        marginLeft: 10,
+        shadowColor: "#8B5CF6",
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        elevation: 6,
     },
     sendText: {
         color: '#fff',
@@ -620,13 +630,13 @@ const styles = StyleSheet.create({
     username: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#555',
-        marginBottom: 2,
+        color: "#B5B5FF",
+        marginBottom: 4,
     },
     time: {
         fontSize: 11,
-        color: '#777',
-        marginTop: 4,
+        color: "#BBBBCC",
+        marginTop: 6,
         alignSelf: 'flex-end',
     },
     typing: {
@@ -651,11 +661,11 @@ const styles = StyleSheet.create({
         maxHeight: 90
     },
     pinnedContainer: {
-        backgroundColor: "#FFFBEA",
+        backgroundColor: "#141425",
+        paddingVertical: 12,
+        paddingHorizontal: 16,
         borderBottomWidth: 1,
-        borderColor: "#F0E0A0",
-        paddingHorizontal: 12,
-        paddingVertical: 8,
+        borderBottomColor: "#2A2A40",
     },
 
     pinnedTitle: {
@@ -666,26 +676,26 @@ const styles = StyleSheet.create({
     },
 
     pinnedItem: {
-        backgroundColor: "#FFFFFF",
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 8,
-        shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 1,
+        backgroundColor: "#1E1E35",
+        borderRadius: 16,
+        padding: 14,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: "#2C2C45",
+        borderLeftWidth: 4,
+        borderLeftColor: "#8B5CF6",
     },
 
     pinnedUser: {
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: "600",
-        color: "#666",
-        marginBottom: 4
+        color: "#8B5CF6",
+        marginBottom: 6,
     },
 
     pinnedText: {
-        fontSize: 14,
-        color: "#222",
+        fontSize: 15,
+        color: "#FFFFFF",
     },
     imageButton: {
         paddingHorizontal: 10,
@@ -695,10 +705,10 @@ const styles = StyleSheet.create({
     },
 
     chatImage: {
-        width: 180,
-        height: 180,
-        borderRadius: 12,
-        marginTop: 4,
+        width: 200,
+        height: 200,
+        borderRadius: 16,
+        marginTop: 6,
     },
     previewOverlay: {
         flex: 1,
