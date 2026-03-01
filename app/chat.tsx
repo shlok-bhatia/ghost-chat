@@ -43,6 +43,7 @@ export default function ChatScreen() {
     const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [typingUser, setTypingUser] = useState<Set<string>>(new Set());
     const sendBtnScale = useRef(new Animated.Value(1)).current;
+    const [isNearBottom, setIsNearBottom] = useState(true);
 
     const [username] = useState(() => {
         const randomNum = Math.floor(100 + Math.random() * 900);
@@ -159,6 +160,16 @@ export default function ChatScreen() {
         };
     }, []);
 
+    useEffect(() => {
+        if (isNearBottom) {
+            const timeout = setTimeout(() => {
+                flatListRef.current?.scrollToEnd({ animated: true });
+            }, 100);
+
+            return () => clearTimeout(timeout);
+        }
+    }, [messages]);
+
     const addLeaveMessage = () => {
         setMessages(prev => [...prev, {
             id: Date.now().toString() + Math.random(),
@@ -272,11 +283,11 @@ export default function ChatScreen() {
             <View style={styles.bgGlowBR} pointerEvents="none" />
             {/* Ghost watermark */}
             <View style={styles.ghostWatermarkWrapper} pointerEvents="none">
-            <Image
-                source={require('./assets/ghost-watermark.png')}
-                style={styles.ghostWatermark}
-            // pointerEvents="none"
-            />
+                <Image
+                    source={require('./assets/ghost-watermark.png')}
+                    style={styles.ghostWatermark}
+                // pointerEvents="none"
+                />
             </View>
 
 
@@ -315,7 +326,17 @@ export default function ChatScreen() {
                 data={messages}
                 keyExtractor={item => item.id}
                 contentContainerStyle={styles.messagesContainer}
-                onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
+                onScroll={(event) => {
+                    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+
+                    const paddingToBottom = 50; // threshold
+                    const isBottom =
+                        layoutMeasurement.height + contentOffset.y >=
+                        contentSize.height - paddingToBottom;
+
+                    setIsNearBottom(isBottom);
+                }}
+                scrollEventThrottle={16}
                 renderItem={({ item }) => {
                     if (item.type === 'system') {
                         return (
