@@ -408,7 +408,10 @@ export default function ChatScreen() {
             >
                 <BlurView intensity={70} tint="dark" style={styles.inputContainer}>
                     <Pressable onPress={pickImage} style={styles.imageButton}>
-                        <Text style={{ fontSize: 22 }}>📷</Text>
+                        <Image
+                            source={require('./assets/camera.png')}
+                            style={styles.cameraIcon}
+                        />
                     </Pressable>
                     <TextInput
                         value={input}
@@ -702,7 +705,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: 'rgba(108, 92, 231, 0.1)',
+        backgroundColor: 'rgba(124, 58, 237, 0.25)',
         borderWidth: 1,
         borderColor: 'rgba(108, 92, 231, 0.2)',
         alignItems: 'center',
@@ -798,5 +801,11 @@ const styles = StyleSheet.create({
         zIndex: 0,
         // React Native's blend mode support
         // style: { mixBlendMode: 'screen' }
+    },
+    cameraIcon: {
+        width: 24,
+        height: 24,
+        resizeMode: 'contain',
+        tintColor: '#8B5CF6'
     },
 });

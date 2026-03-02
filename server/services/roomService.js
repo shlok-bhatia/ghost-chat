@@ -1,7 +1,7 @@
 const Room =require('../models/room');
 const haversine=require('../utils/distance.js')
 
-const radius =500; //metres
+const radius =100; //metres
 
 async function createOrFindRoom (lat , long){
     const rooms= await Room.find();

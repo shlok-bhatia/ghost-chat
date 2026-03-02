@@ -1,6 +1,15 @@
 import { io } from "socket.io-client";
 
-export const socket = io("http://192.168.31.212:3000", {
+export const socket = io("https://ghost-chat-uenp.onrender.com", {
     transports: ["websocket"],
-     autoConnect: true,
+     autoConnect: true,   
+}
+);
+
+socket.on("connect", () => {
+  console.log("Socket connected:", socket.id);
+});
+
+socket.on("connect_error", (err) => {
+  console.log("Connection error:", err.message);
 });
