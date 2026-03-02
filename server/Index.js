@@ -87,7 +87,7 @@ io.on("connection", socket => {
       .sort({ createdAt: -1 })
 
     const formattedImages = imageMessages.map(img => ({
-      id:  img._id.toString(),
+      id: img._id.toString(),
       user: img.uploader,
       imageUri: img.imageUrl,
       type: "image",
@@ -96,7 +96,7 @@ io.on("connection", socket => {
     }));
 
     const formattedTexts = textMessages.map(msg => ({
-      id:  msg._id.toString(),
+      id: msg._id.toString(),
       user: msg.user,
       text: msg.text,
       type: "user",
@@ -174,6 +174,8 @@ io.on("connection", socket => {
   });
 });
 
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
-})
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
