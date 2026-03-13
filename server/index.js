@@ -10,6 +10,8 @@ const server = http.createServer(app);
 const createOrFindRoom = require('./services/roomService');
 // const cloudinary = require("./config/cloudinary");
 const image = require("./models/image");
+const cron = require("node-cron");
+const axios =require("axios");
 
 const io = new Server(server, {
   cors: {
@@ -18,6 +20,21 @@ const io = new Server(server, {
 });
 
 connectDB();
+
+app.get("/ping" , (req , res)=>{
+  res.send("Server is alive")
+})
+
+cron.schedule("*/5 * * * *" , async()=>{
+  try {
+    await axios.get("https://ghost-chat-uenp.onrender.com/ping");
+    console.log("self ping succesful");
+    
+  } catch (error) {
+    console.log("ping failed" , error.message);
+    
+  }
+})
 
 io.on("connection", socket => {
   console.log("User connected:", socket.id);
