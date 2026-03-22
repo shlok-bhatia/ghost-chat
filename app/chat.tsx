@@ -2,6 +2,7 @@ import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useEffect, useRef, useState } from 'react';
+import { Linking } from "react-native";
 import {
     Alert, Animated, FlatList, Image, Keyboard,
     KeyboardAvoidingView, Platform, Pressable,
@@ -88,6 +89,9 @@ export default function ChatScreen() {
         socket.on("room-joined", (roomId) => setRoom(roomId));
 
         socket.on("receive-message", msg => {
+
+            if (msg.senderId === socket.id && msg.type === "image") return;
+
             setMessages(prev => [...prev, {
                 id: msg.id,
                 user: msg.user,
@@ -181,6 +185,38 @@ export default function ChatScreen() {
         }]);
     };
 
+    const renderMessageWithLinks = (text: string) => {
+        const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+|\w+\.(?:com|in|org|net))/g;
+
+        const parts = text.split(urlRegex);
+
+        return parts.map((part, index) => {
+            const isLink = /(https?:\/\/[^\s]+|www\.[^\s]+|\w+\.(?:com|in|org|net))/.test(part);
+
+            if (isLink) {
+                let url = part;
+                if (!url.startsWith("http")) {
+                    url = "https://" + url; // fix for www or .com
+                }
+
+                return (
+                    <Text
+                        key={index}
+                        style={{ color: "#4DA6FF", textDecorationLine: "underline" }}
+                        onPress={() => Linking.openURL(url)}
+                    >
+                        {part}
+                    </Text>
+                );
+            }
+
+            return (
+                <Text key={index} style={styles.messageText}>
+                    {part}
+                </Text>
+            );
+        });
+    };
     const pickImage = async () => {
         try {
             const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -195,6 +231,20 @@ export default function ChatScreen() {
             });
             if (result.canceled) return;
             const asset = result.assets[0];
+            // SHOW IMAGE INSTANTLY
+            const tempId = Date.now().toString();
+
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: tempId,
+                    user: username,
+                    imageUri: asset.uri,   // LOCAL IMAGE
+                    type: "image",
+                    createdAt: Date.now(),
+                    isMe: true,
+                }
+            ]);
             const base64Img = `data:image/jpeg;base64,${asset.base64}`;
             const formData = new FormData();
             formData.append("file", base64Img);
@@ -208,6 +258,14 @@ export default function ChatScreen() {
                 Alert.alert("Upload failed", data.error?.message || "Failed to upload image");
                 return;
             }
+            // UPDATE LOCAL IMAGE WITH CLOUDINARY URL
+            setMessages(prev =>
+                prev.map(msg =>
+                    msg.id === tempId
+                        ? { ...msg, imageUri: data.secure_url }
+                        : msg
+                )
+            );
             socket.emit("send-image", { room, user: username, imageUrl: data.secure_url, moderation: data.moderation });
         } catch (error) {
             Alert.alert("Error", `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -302,7 +360,9 @@ export default function ChatScreen() {
                         {pinnedNotes.map(note => (
                             <View key={String(note._id)} style={styles.pinnedItem}>
                                 <Text style={styles.pinnedUser}>{note.user}</Text>
-                                <Text style={styles.pinnedText}>{note.text}</Text>
+                                <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                                    {renderMessageWithLinks(note.text)}
+                                </View>
                             </View>
                         ))}
                     </ScrollView>
@@ -364,10 +424,7 @@ export default function ChatScreen() {
                                     {item.type === 'image' && item.imageUri ? (
                                         <Pressable
                                             onPress={() => setPreviewImage(item.imageUri!)}
-                                            onLongPress={() => {
-                                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                                                pinnedMessage('📷 Image');
-                                            }}
+                                            
                                         >
                                             <Image
                                                 source={{ uri: item.imageUri }}
@@ -376,7 +433,9 @@ export default function ChatScreen() {
                                             />
                                         </Pressable>
                                     ) : (
-                                        <Text style={styles.messageText}>{item.text}</Text>
+                                        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+                                            {renderMessageWithLinks(item.text || "")}
+                                        </View>
                                     )}
                                     <Text style={[styles.time, item.isMe && styles.timeMe]}>
                                         {getMessageAge(item.createdAt)}

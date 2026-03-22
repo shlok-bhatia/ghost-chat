@@ -69,7 +69,7 @@ io.on("connection", socket => {
           id: imageMsg._id,
           user,
           imageUri: imageUrl,
-          createdAt: Date.now(),
+          createdAt: imageMsg.createdAt,
           type: "image",
           senderId: socket.id,
         });
