@@ -8,16 +8,16 @@ async function saveMessage({roomId , text , user}){
     })
 }
 
-async function getRecentMessages(roomId , days=7){
-    const since= new Date();
-    since.setDate(since.getDate()-days);
+async function getRecentMessages(roomId ){
+    // const since= new Date();
+    // since.setDate(since.getDate()-days);
 
     return await Message.find({
         roomId,
-        createdAt:{$gte : since}
+        // createdAt:{$gte : since}
     })
     .sort({createdAt:1})
-    .limit(200)
+    // .limit(200)
 }
 
 module.exports={

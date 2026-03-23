@@ -7,15 +7,30 @@
     "scheme": "ghostchat",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+
+     "icon": "./assets/ghost-chat-icon.png",
+
+     "splash": {
+      "image": "./assets/splash-screen.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#0A0814"
+    },
+
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+       "icon": "./assets/ghost-chat-icon.png"
     },
     "android": {
-      "package": "com.shlokbhatia.ghostchat"
+      "package": "com.shlokbhatia.ghostchat",
+       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon-foreground.png",
+        "backgroundImage": "./assets/adaptive-icon-background.png",
+        "backgroundColor": "#0A0814"
+      }
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/ghost-chat-icon.png"
     },
     "plugins": [
       "expo-router",
