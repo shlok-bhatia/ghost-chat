@@ -15,4 +15,8 @@ socket.on("connect_error", (err) => {
   console.log("Connection error:", err.message);
 });
 
+socket.on("disconnect", () => {
+  console.log("⚠️ Disconnected");
+});
+
 // ghost-chat-uenp.onrender.com
