@@ -2,7 +2,8 @@ import { io } from "socket.io-client";
 
 export const socket = io(" https://ghost-chat-uenp.onrender.com", {
      transports: ["polling", "websocket"],
-     autoConnect: true,   
+  autoConnect: true,
+  timeout: 20000, 
 }
 );
 
